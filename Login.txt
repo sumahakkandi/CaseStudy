@@ -1,0 +1,124 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Windows.Forms;
+using System.Web.Security;
+using Final_National.Models;
+
+namespace Final_National.Controllers
+{
+    public class HomeController : Controller
+    {
+
+        casestudyEntities db = new casestudyEntities();
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        //public ActionResult Contact()
+        //{
+        //    ViewBag.Message = "Your contact page.";
+
+        //    return View();
+        //}
+
+            
+
+        [HttpGet]
+        public ActionResult UserLogin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UserLogin(LoginCredential UserAuthenticate)
+        {
+          
+            if (ModelState.IsValid)
+            {
+                if (UserAuthenticate.User_type == "Admin")
+                {
+                    var obj = db.Admins.Where(a => a.Username.Equals(UserAuthenticate.Username) && a.Passwords.Equals(UserAuthenticate.Passwords)).FirstOrDefault();
+                    if (obj != null)
+                    {
+                        Session["UserID"] = obj.User_ID;
+                        Session["UserName"] = obj.Username.ToString();
+                        //Session["Name"] = obj.tblPatientDetail.cFirstName + " " + obj.tblPatientDetail.cLastName;
+                        return RedirectToAction("Details", "Admin");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Login Credentials are incorrect please try again");
+                    }
+                }
+                else if (UserAuthenticate.User_type == "Staff_User")
+                {
+                    var obj = db.Store_User.Where(a => a.Username.Equals(UserAuthenticate.Username) && a.Passwords.Equals(UserAuthenticate.Passwords)).FirstOrDefault();
+                    if (obj != null)
+                    {
+                        Session["UserID"] = obj.User_ID;
+                        Session["UserName"] = obj.Username.ToString();
+                        //Session["Name"] = obj.tblPatientDetail.cFirstName + " " + obj.tblPatientDetail.cLastName;
+                        return RedirectToAction("About", "Home");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Login Credentials are incorrect please try again");
+                    }
+                }
+                else if (UserAuthenticate.User_type == "Approver")
+                {
+                    var obj = db.Approvers.Where(a => a.Username.Equals(UserAuthenticate.Username) && a.Passwords.Equals(UserAuthenticate.Passwords)).FirstOrDefault();
+                    if (obj != null)
+                    {
+                        Session["UserID"] = obj.User_ID;
+                        Session["UserName"] = obj.Username.ToString();
+                        //Session["Name"] = obj.tblPatientDetail.cFirstName + " " + obj.tblPatientDetail.cLastName;
+                        return RedirectToAction("About", "Home");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Login Credentials are incorrect please try again");
+                    }
+                }
+
+                //else if (UserAuthenticate.User_type == "Staff_User")
+                //{
+                //    var obj = db.Store_User.Where(a => a.Username.Equals(UserAuthenticate.Username) && a.Passwords.Equals(UserAuthenticate.Passwords)).FirstOrDefault();
+                //    if (obj != null)
+                //    {
+                //       Session["UserID"] = obj.User_ID;
+                //        Session["UserName"] = obj.Username.ToString();
+                //        //Session["Name"] = obj.tblPatientDetail.cFirstName + " " + obj.tblPatientDetail.cLastName;
+                //        return RedirectToAction("Index", "tasks");
+                //    }
+                //    else
+                //    {
+                //        MessageBox.Show("Login Credentials are incorrect please try again");
+                //    }
+                //}
+
+
+            }
+
+            return View(UserAuthenticate);
+        }
+
+        public ActionResult Sample()
+        {
+            return View();
+        }
+
+    }
+}
+    
